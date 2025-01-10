@@ -21,8 +21,7 @@ on:
       - opened
       - synchronize
       - reopened
-    paths:
-      - docker/**
+
     paths-ignore:
       - openmetadata-docs/**
       - .github/**

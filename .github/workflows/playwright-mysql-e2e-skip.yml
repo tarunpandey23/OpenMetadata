@@ -25,8 +25,6 @@ on:
       - openmetadata-docs/**
       - .github/**
       - openmetadata-dist/**
-      - docker/**
-
 jobs:
   playwright-ci-mysql:
     runs-on: ubuntu-latest
