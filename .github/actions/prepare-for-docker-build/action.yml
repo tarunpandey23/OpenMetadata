@@ -35,8 +35,7 @@ runs:
       run: |
         sudo apt-get install -y python3-venv
 
-    - name: Install open-metadata dependencies (Only for ingestion images)
-      if: inputs.is_ingestion == 'true'
+    - name: Install open-metadata dependencies
       shell: bash
       run: |
         python3 -m venv env
