@@ -46,15 +46,3 @@ jobs:
           path: trivy-results.md
         
 
-
-
-
-
-
-          #   docker build -t openmetadata/server:${{ inputs.docker_release_tag }} .
-              #   - name: Prepare for Docker Build
-    #     id: prepare
-    #     uses: ./.github/actions/prepare-for-docker-build-and-push
-    #     with:
-    #       image: openmetadata/server
-    #       tag: ${{ inputs.docker_release_tag }}
