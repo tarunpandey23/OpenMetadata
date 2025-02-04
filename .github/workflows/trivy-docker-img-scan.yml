@@ -7,7 +7,14 @@ jobs:
   build-and-scan:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write 
+      pull-requests: write
+    strategy:
+      matrix:
+        image:
+          - openmetadata/server:trivy
+          - openmetadata/ingestion:trivy  
+        fail-fast: true
+        # max-parallel: 2 
 
     steps:
       - name: Checkout Repository
@@ -20,28 +27,58 @@ jobs:
           image: openmetadata/server
           tag: trivy
 
+      # - name: Build Docker Image
+      #   run: |
+      #     docker build -t openmetadata/server:trivy -f docker/development/Dockerfile .
+
       - name: Build Docker Image
         run: |
-          docker build -t openmetadata/server:trivy -f docker/development/Dockerfile .
-      
+          if [[ "${{ matrix.image }}" == "openmetadata/server:trivy" ]]; then
+            docker build -t openmetadata/server:trivy -f docker/development/Dockerfile .
+          elif [[ "${{ matrix.image }}" == "openmetadata/ingestion:trivy" ]]; then
+            docker build -t openmetadata/ingestion:trivy -f ingestion/Dockerfile.ci .
+          fi
+  
+      # - name: Run Trivy Image Scan
+      #   id: trivy_scan
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     scan-type: "image"
+      #     image-ref: "openmetadata/server:trivy"
+      #     ignore-unfixed: true
+      #     # severity: "HIGH,CRITICAL"
+      #     output: "trivy-results.txt"
+      #   env:
+      #     TRIVY_DISABLE_VEX_NOTICE: "true"
+
       - name: Run Trivy Image Scan
         id: trivy_scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: "image"
-          image-ref: "openmetadata/server:trivy"
+          image-ref: ${{ matrix.image }}
           ignore-unfixed: true
-        #   severity: "HIGH,CRITICAL"
-          output: "trivy-results.txt"
+          severity: "HIGH,CRITICAL"
+          output: "trivy-results-${{ matrix.image }}.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
+
+
+              
+    #   - name: Format Trivy Output
+    #   run: |
+    #     echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
+    #     echo "" >> trivy-results.md
+    #     echo '```' >> trivy-results.md
+    #     cat trivy-results.txt >> trivy-results.md
+    #     echo '```' >> trivy-results.md
     
       - name: Format Trivy Output
         run: |
           echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
           echo "" >> trivy-results.md
           echo '```' >> trivy-results.md
-          cat trivy-results.txt >> trivy-results.md
+          cat trivy-results-${{ matrix.image }}.txt >> trivy-results.md
           echo '```' >> trivy-results.md
     
       - name: Comment Trivy Scan Results on PR
