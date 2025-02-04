@@ -12,11 +12,20 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+    
+      - name: Verify Current Working Directory
+        run: pwd
+
+      - name: List All Files in the Repository
+        run: ls -R .  
+
+      - name: List Files in Docker Directory
+        run: ls -R ./docker/  
 
       - name: Build Docker Image
         run: |
-            docker build -t openmetadata/server:latest -f ./docker/development/ .
- 
+            docker build -t openmetadata/server:latest -f docker/development/Dockerfile .
+
       - name: Run Trivy Image Scan
         id: trivy_scan
         uses: aquasecurity/trivy-action@master
