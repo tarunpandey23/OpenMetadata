@@ -12,18 +12,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-    
-      - name: Verify Current Working Directory
-        run: pwd
-
-      - name: List Files in Repository
-        run: ls -R .
-
-      - name: List Files in Docker Directory
-        run: ls -R docker/
-
-      - name: Check if OpenMetadata Artifact Exists
-        run: ls -R openmetadata-dist/target/ || echo "❌ Directory not found!"
 
       - name: Prepare for Docker Build
         id: prepare
@@ -32,15 +20,8 @@ jobs:
           image: openmetadata/server
           tag: latest
 
-      - name: Find the Artifact
-        run: find . -name "openmetadata-*.tar.gz"
-
       - name: Build Docker Image
         run: |
-          if [ ! -f openmetadata-dist/target/openmetadata-*.tar.gz ]; then
-            echo "❌ ERROR: Required artifact openmetadata-*.tar.gz not found!";
-            exit 1;
-          fi
           docker build -t openmetadata/server:latest -f docker/development/Dockerfile .
 
       - name: Run Trivy Image Scan
