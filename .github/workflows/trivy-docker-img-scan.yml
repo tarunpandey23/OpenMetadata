@@ -24,7 +24,7 @@ jobs:
 
       - name: Prepare for Docker Build
         id: prepare
-        uses: ./.github/actions/prepare-for-docker-build-and-push
+        uses: ./.github/actions/prepare-for-docker-build
         with:
           image: openmetadata/server
           tag: latest
