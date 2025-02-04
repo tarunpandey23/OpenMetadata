@@ -29,30 +29,43 @@ runs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Set up JDK 17
+    - name: Set up JDK 17 (Only for Server)
+      if: inputs.is_ingestion == 'false'
       uses: actions/setup-java@v4
       with:
-          java-version: 17
-          distribution: 'temurin'
+        java-version: 17
+        distribution: 'temurin'
 
     - name: Install antlr cli
       shell: bash
       run: |
-          sudo make install_antlr_cli
+        sudo make install_antlr_cli
 
     - name: Setup jq
       shell: bash
       run: |
-          sudo apt-get update
-          sudo apt-get install jq
+        sudo apt-get update
+        sudo apt-get install jq
 
     - name: Build OpenMetadata Server Application
+      if: inputs.is_ingestion == 'false'
       shell: bash
       run: |
-          mvn -DskipTests clean package
+        mvn -DskipTests clean package
 
     - name: Upload OpenMetadata application to Artifact
+      if: inputs.is_ingestion == 'false'
       uses: actions/upload-artifact@v4
       with:
-          name: openmetadata-binary-${{ github.run_id }}
-          path: /home/runner/work/OpenMetadata/OpenMetadata/openmetadata-dist/target/*.tar.gz
+        name: openmetadata-binary
+        path: /home/runner/work/OpenMetadata/OpenMetadata/openmetadata-dist/target/*.tar.gz
+
+    - name: Install OpenMetadata Ingestion Dependencies
+      if: inputs.is_ingestion == 'true'
+      shell: bash
+      run: |
+        python3 -m venv env
+        source env/bin/activate
+        pip install --upgrade pip
+        sudo make install_antlr_cli
+        make install_dev generate

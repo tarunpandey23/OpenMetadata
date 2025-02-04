@@ -13,7 +13,7 @@ jobs:
         image:
           - openmetadata/server:trivy
           - openmetadata/ingestion:trivy  
-      fail-fast: true
+      fail-fast: false
     # max-parallel: 2 
 
     steps:
@@ -26,6 +26,7 @@ jobs:
         with:
           image: openmetadata/server
           tag: trivy
+          is_ingestion: ${{ matrix.image == 'openmetadata/ingestion:trivy' && 'true' || 'false' }}
 
       # - name: Build Docker Image
       #   run: |
@@ -64,7 +65,6 @@ jobs:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
 
-              
     #   - name: Format Trivy Output
     #   run: |
     #     echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
