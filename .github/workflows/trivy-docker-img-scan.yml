@@ -23,9 +23,8 @@ jobs:
 
       - name: Build OpenMetadata Artifacts (Maven)
         shell: bash
-        run: |
-            set -e  
-            mvn clean install -DskipTests -X
+        run: | 
+            mvn clean install -DskipTests
 
       - name: Build Docker Image
         run: |
