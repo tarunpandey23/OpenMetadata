@@ -15,27 +15,34 @@ jobs:
     
       - name: Verify Current Working Directory
         run: pwd
-      
+
+      - name: List Files in Repository
+        run: ls -R .
+
+      - name: List Files in Docker Directory
+        run: ls -R docker/
+
       - name: Prepare for Docker Build
         id: prepare
         uses: ./.github/actions/prepare-for-docker-build-and-push
         with:
           image: openmetadata/server
+          tag: latest
 
       - name: Build Docker Image
         run: |
-            docker build -t openmetadata/server:latest -f docker/development/Dockerfile .
+          docker build -t openmetadata/server:latest -f docker/development/Dockerfile .
 
       - name: Run Trivy Image Scan
         id: trivy_scan
         uses: aquasecurity/trivy-action@master
         with:
-            scan-type: "image"
-            image-ref: "openmetadata/server:latest"
-            ignore-unfixed: true
-            severity: "HIGH,CRITICAL"
-            output: "trivy-results.txt" 
-      
+          scan-type: "image"
+          image-ref: "openmetadata/server:latest"
+          ignore-unfixed: true
+          severity: "HIGH,CRITICAL"
+          output: "trivy-results.txt" 
+
       - name: Format Trivy Output
         run: |
           echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
@@ -53,5 +60,3 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           path: trivy-results.md
-        
-
