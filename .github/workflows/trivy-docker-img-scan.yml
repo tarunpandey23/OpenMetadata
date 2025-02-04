@@ -36,7 +36,13 @@ jobs:
           elif [[ "${{ matrix.image }}" == "openmetadata/ingestion:trivy" ]]; then
             docker build -t openmetadata/ingestion:trivy -f ingestion/Dockerfile.ci .
           fi
-  
+      - name: Set Trivy Scan Output File Name
+        id: set_output
+        run: |
+          # Replace the colon with a dash for valid file naming
+          TRIVY_OUTPUT_FILE=$(echo "${{ matrix.image }}" | sed 's/:/-/g')
+          echo "TRIVY_OUTPUT_FILE=$TRIVY_OUTPUT_FILE" >> $GITHUB_ENV
+
       - name: Run Trivy Image Scan
         id: trivy_scan
         uses: aquasecurity/trivy-action@master
@@ -45,7 +51,7 @@ jobs:
           image-ref: ${{ matrix.image }}
           ignore-unfixed: true
           severity: "HIGH,CRITICAL"
-          output: "trivy-results-${{ matrix.image.replace(':', '-') }}.txt"
+          output: "trivy-results-${{ env.TRIVY_OUTPUT_FILE }}.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
@@ -55,7 +61,7 @@ jobs:
           echo "" >> trivy-results.md
           echo '```' >> trivy-results.md
           # Correct output file path handling here
-          cat trivy-results-${{ matrix.image.replace(':', '-') }}.txt >> trivy-results.md
+          cat trivy-results-${{ env.TRIVY_OUTPUT_FILE }}.txt >> trivy-results.md
           echo '```' >> trivy-results.md
     
       - name: Comment Trivy Scan Results on PR
