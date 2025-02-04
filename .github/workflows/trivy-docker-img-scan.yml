@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
             set -e  
-            mvn clean install -DskipTests 
+            mvn clean install -DskipTests -X
 
       - name: Build Docker Image
         run: |
