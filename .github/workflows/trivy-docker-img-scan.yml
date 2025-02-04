@@ -20,33 +20,6 @@ jobs:
           image: openmetadata/server
           tag: trivy
 
-    #   - name: Set up JDK 17
-    #     uses: actions/setup-java@v4
-    #     with:
-    #       java-version: 17
-    #       distribution: 'temurin'
-  
-    #   - name: Install antlr cli
-    #     run: |
-    #       sudo make install_antlr_cli
-  
-    #   - name: Setup jq
-    #     run: |
-    #       sudo apt-get update
-    #       sudo apt-get install jq
-  
-    #   - name: Build OpenMetadata Server Application
-    #     env:
-    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     run: |
-    #       mvn -DskipTests clean package
-  
-    #   - name: Upload OpenMetadata application to Artifact
-    #     uses: actions/upload-artifact@v4
-    #     with:
-    #       name: openmetadata-binary
-    #       path: /home/runner/work/OpenMetadata/OpenMetadata/openmetadata-dist/target/*.tar.gz
-
       - name: Build Docker Image
         run: |
           docker build -t openmetadata/server:trivy -f docker/development/Dockerfile .
@@ -58,23 +31,11 @@ jobs:
           scan-type: "image"
           image-ref: "openmetadata/server:trivy"
           ignore-unfixed: true
-          severity: "HIGH,CRITICAL"
-          output: "trivy-results.txt" 
-
-      - name: Format Trivy Output
-        run: |
-          echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
-          echo "" >> trivy-results.md
-          if [[ -s trivy-results.txt ]]; then
-            echo "### 🔴 Found HIGH and CRITICAL vulnerabilities:" >> trivy-results.md
-            echo '```' >> trivy-results.md
-            cat trivy-results.txt >> trivy-results.md
-            echo '```' >> trivy-results.md
-          else
-            echo "✅ No HIGH or CRITICAL vulnerabilities found." >> trivy-results.md
-          fi 
-
+          output: "trivy-results.txt"
+        env:
+          TRIVY_DISABLE_VEX_NOTICE: "true"
+        
       - name: Comment Trivy Scan Results on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          path: trivy-results.md
+          path: trivy-results.txt
