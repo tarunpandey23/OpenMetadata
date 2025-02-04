@@ -31,7 +31,7 @@ jobs:
               scan-type: "image"
               image-ref: "openmetadata/server:trivy"
               ignore-unfixed: true
-              # severity: "HIGH,CRITICAL"
+              severity: "HIGH,CRITICAL"
               output: "trivy-results.txt"
         env:
               TRIVY_DISABLE_VEX_NOTICE: "true"
