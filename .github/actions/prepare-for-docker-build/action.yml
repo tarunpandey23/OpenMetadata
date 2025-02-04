@@ -40,11 +40,6 @@ runs:
         npm install --global yarn
         node -v && yarn -v  # Verify installation
 
-    - name: Build OpenMetadata Artifacts (Maven)
-      shell: bash
-      run: |
-        set -e  
-        mvn clean install -DskipTests  
 
     # - name: Install Ubuntu dependencies (Only for ingestion images)
     #   if: inputs.is_ingestion == 'true'
@@ -62,13 +57,13 @@ runs:
     #     sudo make install_antlr_cli
     #     make install_dev generate
     
-    # - name: Docker Meta (Generate Tags)
-    #   id: meta
-    #   uses: docker/metadata-action@v5
-    #   with:
-    #     images: |
-    #       ${{ inputs.image }}
-    #     sep-tags: ','
-    #     tags: |
-    #       type=raw,value=${{ inputs.release_version }},enable=${{ inputs.is_ingestion == 'true' }}
-    #       type=raw,${{ inputs.tag }}
+    - name: Docker Meta (Generate Tags)
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: |
+          ${{ inputs.image }}
+        sep-tags: ','
+        tags: |
+          type=raw,value=${{ inputs.release_version }},enable=${{ inputs.is_ingestion == 'true' }}
+          type=raw,${{ inputs.tag }}
