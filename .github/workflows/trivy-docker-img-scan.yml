@@ -45,7 +45,7 @@ jobs:
           image-ref: ${{ matrix.image }}
           ignore-unfixed: true
           severity: "HIGH,CRITICAL"
-          output: "trivy-results-${{ matrix.image //[:]/- }}.txt"
+          output: "trivy-results-${{ matrix.image.replace(':', '-') }}.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
@@ -55,7 +55,7 @@ jobs:
           echo "" >> trivy-results.md
           echo '```' >> trivy-results.md
           # Correct output file path handling here
-          cat trivy-results-${{ matrix.image //[:]/- }}.txt >> trivy-results.md
+          cat trivy-results-${{ matrix.image.replace(':', '-') }}.txt >> trivy-results.md
           echo '```' >> trivy-results.md
     
       - name: Comment Trivy Scan Results on PR
