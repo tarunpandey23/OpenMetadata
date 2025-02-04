@@ -31,14 +31,14 @@ jobs:
           scan-type: "image"
           image-ref: "openmetadata/server:trivy"
           ignore-unfixed: true
-          severity: "HIGH,CRITICAL"
+        #   severity: "HIGH,CRITICAL"
           output: "trivy-results.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
     
       - name: Format Trivy Output
         run: |
-          if grep -q "HIGH: [1-9]" trivy-results.txt || grep -q "CRITICAL: [1-9]" trivy-results.txt; then
+          if grep -q "HIGH: [0-9]" trivy-results.txt || grep -q "CRITICAL: [0-9]" trivy-results.txt; then
             echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
             echo "" >> trivy-results.md
             echo "### 🔴 Found HIGH and CRITICAL vulnerabilities:" >> trivy-results.md
