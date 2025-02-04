@@ -12,7 +12,7 @@ jobs:
       matrix:
         image:
           - openmetadata/server
-          - openmetadata/ingestion
+          - openmetadata/ingestion  
       fail-fast: false
     # max-parallel: 2 
 
@@ -25,15 +25,16 @@ jobs:
         uses: ./.github/actions/prepare-for-docker-build
         with:
           image: openmetadata/server
+          tag: trivy
           is_ingestion: ${{ matrix.image == 'openmetadata/ingestion' && 'true' || 'false' }}
 
 
       - name: Build Docker Image
         run: |
           if [[ "${{ matrix.image }}" == "openmetadata/server" ]]; then
-            docker build -t openmetadata/server -f docker/development/Dockerfile .
+            docker build -t openmetadata/server:trivy -f docker/development/Dockerfile .
           elif [[ "${{ matrix.image }}" == "openmetadata/ingestion" ]]; then
-            docker build -t openmetadata/ingestion -f ingestion/Dockerfile.ci .
+            docker build -t openmetadata/ingestion:trivy -f ingestion/Dockerfile.ci .
           fi
 
 
