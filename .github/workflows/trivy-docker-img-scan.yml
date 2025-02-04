@@ -11,8 +11,8 @@ jobs:
     strategy:
       matrix:
         image:
-          - openmetadata/server
-          - openmetadata/ingestion  
+          - openmetadata-server
+          - openmetadata-ingestion  
       fail-fast: false
     # max-parallel: 2 
 
@@ -24,17 +24,17 @@ jobs:
         id: prepare
         uses: ./.github/actions/prepare-for-docker-build
         with:
-          image: openmetadata/server
+          image: openmetadata-server
           tag: trivy
-          is_ingestion: ${{ matrix.image == 'openmetadata/ingestion' && 'true' || 'false' }}
+          is_ingestion: ${{ matrix.image == 'openmetadata-ingestion' && 'true' || 'false' }}
 
 
       - name: Build Docker Image
         run: |
-          if [[ "${{ matrix.image }}" == "openmetadata/server" ]]; then
-            docker build -t openmetadata/server:trivy -f docker/development/Dockerfile .
-          elif [[ "${{ matrix.image }}" == "openmetadata/ingestion" ]]; then
-            docker build -t openmetadata/ingestion:trivy -f ingestion/Dockerfile.ci .
+          if [[ "${{ matrix.image }}" == "openmetadata-server" ]]; then
+            docker build -t openmetadata-server:trivy -f docker/development/Dockerfile .
+          elif [[ "${{ matrix.image }}" == "openmetadata-ingestion" ]]; then
+            docker build -t openmetadata-ingestion:trivy -f ingestion/Dockerfile.ci .
           fi
 
 
@@ -43,7 +43,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: "image"
-          image-ref: ${{ matrix.image }}
+          image-ref: ${{ matrix.image }}:trivy
           ignore-unfixed: true
           severity: "HIGH,CRITICAL"
           output: "trivy-results-${{ matrix.image }}.txt"
