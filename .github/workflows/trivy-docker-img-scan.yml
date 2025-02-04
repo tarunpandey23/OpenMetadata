@@ -11,8 +11,8 @@ jobs:
     strategy:
       matrix:
         image:
-          - openmetadata/server:trivy
-          - openmetadata/ingestion:trivy  
+          - openmetadata/server
+          - openmetadata/ingestion
       fail-fast: false
     # max-parallel: 2 
 
@@ -25,23 +25,17 @@ jobs:
         uses: ./.github/actions/prepare-for-docker-build
         with:
           image: openmetadata/server
-          tag: trivy
-          is_ingestion: ${{ matrix.image == 'openmetadata/ingestion:trivy' && 'true' || 'false' }}
+          is_ingestion: ${{ matrix.image == 'openmetadata/ingestion' && 'true' || 'false' }}
 
 
       - name: Build Docker Image
         run: |
-          if [[ "${{ matrix.image }}" == "openmetadata/server:trivy" ]]; then
-            docker build -t openmetadata/server:trivy -f docker/development/Dockerfile .
-          elif [[ "${{ matrix.image }}" == "openmetadata/ingestion:trivy" ]]; then
-            docker build -t openmetadata/ingestion:trivy -f ingestion/Dockerfile.ci .
+          if [[ "${{ matrix.image }}" == "openmetadata/server" ]]; then
+            docker build -t openmetadata/server -f docker/development/Dockerfile .
+          elif [[ "${{ matrix.image }}" == "openmetadata/ingestion" ]]; then
+            docker build -t openmetadata/ingestion -f ingestion/Dockerfile.ci .
           fi
-      - name: Set Trivy Scan Output File Name
-        id: set_output
-        run: |
-          # Replace the colon with a dash for valid file naming
-          TRIVY_OUTPUT_FILE=$(echo "${{ matrix.image }}" | sed 's/:/-/g')
-          echo "TRIVY_OUTPUT_FILE=$TRIVY_OUTPUT_FILE" >> $GITHUB_ENV
+
 
       - name: Run Trivy Image Scan
         id: trivy_scan
@@ -51,7 +45,7 @@ jobs:
           image-ref: ${{ matrix.image }}
           ignore-unfixed: true
           severity: "HIGH,CRITICAL"
-          output: "trivy-results-${{ env.TRIVY_OUTPUT_FILE }}.txt"
+          output: "trivy-results-${{ matrix.image }}.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
@@ -61,7 +55,7 @@ jobs:
           echo "" >> trivy-results.md
           echo '```' >> trivy-results.md
           # Correct output file path handling here
-          cat trivy-results-${{ env.TRIVY_OUTPUT_FILE }}.txt >> trivy-results.md
+          cat trivy-results-${{ matrix.image }}.txt >> trivy-results.md
           echo '```' >> trivy-results.md
     
       - name: Comment Trivy Scan Results on PR
