@@ -104,7 +104,7 @@ jobs:
             ignore-unfixed: true
             severity: 'CRITICAL,HIGH,MEDIUM'
             format: template
-            template: "@/github/workspace/.github/trivy/templates/github.tpl"
+            template: "./.github/trivy/templates/github.tpl"
             output: trivy-results.md
 
       - name: Comment Trivy Scan Results on PR
