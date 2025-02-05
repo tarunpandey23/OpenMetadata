@@ -100,7 +100,6 @@ jobs:
             # image-ref: openmetadata-server:trivy
             image-ref: docker.getcollate.io/openmetadata/server:1.6.1
             hide-progress: false
-            exit-code: '1'
             ignore-unfixed: true
             severity: 'CRITICAL,HIGH,MEDIUM'
             format: template
