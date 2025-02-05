@@ -114,7 +114,7 @@ jobs:
           ignore-unfixed: true
         #   severity: "CRITICAL,HIGH,MEDIUM"
           format: template
-          template: "@/github/trivy/template/github.tpl"
+          template: ".github/trivy/template/github.tpl"
           output: trivy-results.md
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
