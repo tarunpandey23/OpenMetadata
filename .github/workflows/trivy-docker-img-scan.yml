@@ -1,122 +1,19 @@
-# name: Trivy Scan For OpenMetadata Server Docker Image
-
-# on:
-#     pull_request:
-#     # pull_request_target:
-#     #     types: [labeled, opened, synchronize, reopened]
-#     #     paths:
-#     #       - "openmetadata-service/**"
-#     #       - "openmetadata-spec/src/main/resources/json/schema/**"
-#     #       - "openmetadata-dist/**"
-#     #       - "openmetadata-clients/**"
-#     #       - "common/**"
-#     #       - "pom.xml"
-#     #       - "yarn.lock"
-#     #       - "Makefile"
-#     #       - "bootstrap/**"
-# concurrency: 
-#   group: trivy-server-scan-${{ github.head_ref || github.run_id }}
-#   cancel-in-progress: true
-
-# jobs:
-#   build-and-scan:
-#     runs-on: ubuntu-latest
-#     permissions:
-#       pull-requests: write
-#     steps:
-#       - name: Wait for the labeler
-#         uses: lewagon/wait-on-check-action@v1.3.3
-#         if: ${{ github.event_name == 'pull_request_target' }}
-#         with:
-#           ref: ${{ github.event.pull_request.head.sha }}
-#           check-name: Team Label
-#           repo-token: ${{ secrets.GITHUB_TOKEN }}
-#           wait-interval: 90
-
-#       - name: Verify PR labels
-#         uses: jesusvasquez333/verify-pr-label-action@v1.4.0
-#         if: ${{ github.event_name == 'pull_request_target' }}
-#         with:
-#           github-token: '${{ secrets.GITHUB_TOKEN }}'
-#           valid-labels: 'safe to test'
-#           pull-request-number: '${{ github.event.pull_request.number }}'
-#           disable-reviews: true  # To not auto approve changes
-
-#       - name: Checkout Repository
-#         uses: actions/checkout@v4
-
-#       - name: Debug Workspace - List Files
-#         run: |
-#           echo "Current working directory: $(pwd)"
-#           ls -R .github/trivy/templates
-
-#       - name: Print Absolute Path of Template
-#         run: realpath .github/trivy/templates/github.tpl
-            
-#     #   - name: Prepare for Docker Build
-#     #     id: prepare
-#     #     uses: ./.github/actions/prepare-for-docker-build
-#     #     with:
-#     #       image: openmetadata-server
-#     #       tag: trivy
-#     #       is_ingestion: false
-
-
-#     #   - name: Build Docker Image
-#     #     run: |
-#     #       docker build -t openmetadata-server:trivy -f docker/development/Dockerfile .
-       
-
-#     #   - name: Run Trivy Image Scan
-#     #     id: trivy_scan
-#     #     uses: aquasecurity/trivy-action@master
-#     #     with:
-#     #       scan-type: "image"
-#     #       image-ref: openmetadata-server:trivy
-#     #       ignore-unfixed: true
-#     #       severity: "HIGH,CRITICAL,MEDIUM"
-#     #       output: "trivy-results-server.txt"
-#     #     env:
-#     #       TRIVY_DISABLE_VEX_NOTICE: "true"
-
-#     #   - name: Format Trivy Output
-#     #     run: |
-#     #       echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
-#     #       echo "" >> trivy-results.md
-#     #       echo '```' >> trivy-results.md
-#     #       # Correct output file path handling here
-#     #       cat trivy-results-server.txt >> trivy-results.md
-#     #       echo '```' >> trivy-results.md
-    
-#     #   - name: Comment Trivy Scan Results on PR
-#     #     uses: marocchino/sticky-pull-request-comment@v2
-#     #     with:
-#     #       path: trivy-results.md
-
-#       - name: Run Trivy config scanner - High,Critical
-#         uses: aquasecurity/trivy-action@master
-#         with:
-#             scan-type: 'image'
-#             # image-ref: openmetadata-server:trivy
-#             image-ref: docker.getcollate.io/openmetadata/server:1.6.1
-#             hide-progress: false
-#             ignore-unfixed: true
-#             severity: 'CRITICAL,HIGH,MEDIUM'
-#             format: template
-#             template: "./.github/trivy/templates/github.tpl"
-#             output: trivy-results.md
-
-#       - name: Comment Trivy Scan Results on PR
-#         uses: marocchino/sticky-pull-request-comment@v2
-#         with:
-#             path: trivy-results.md
-
-
 name: Trivy Scan For OpenMetadata Server Docker Image
 
 on:
-  pull_request:
-
+    pull_request:
+    # pull_request_target:
+    #     types: [labeled, opened, synchronize, reopened]
+    #     paths:
+    #       - "openmetadata-service/**"
+    #       - "openmetadata-spec/src/main/resources/json/schema/**"
+    #       - "openmetadata-dist/**"
+    #       - "openmetadata-clients/**"
+    #       - "common/**"
+    #       - "pom.xml"
+    #       - "yarn.lock"
+    #       - "Makefile"
+    #       - "bootstrap/**"
 concurrency: 
   group: trivy-server-scan-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
@@ -127,37 +24,114 @@ jobs:
     permissions:
       pull-requests: write
     steps:
+      - name: Wait for the labeler
+        uses: lewagon/wait-on-check-action@v1.3.3
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          check-name: Team Label
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 90
+
+      - name: Verify PR labels
+        uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          valid-labels: 'safe to test'
+          pull-request-number: '${{ github.event.pull_request.number }}'
+          disable-reviews: true  # To not auto approve changes
+
       - name: Checkout Repository
         uses: actions/checkout@v4
+            
+    #   - name: Prepare for Docker Build
+    #     id: prepare
+    #     uses: ./.github/actions/prepare-for-docker-build
+    #     with:
+    #       image: openmetadata-server
+    #       tag: trivy
+    #       is_ingestion: false
 
-      - name: Debug Template Path
-        run: |
-          echo "Checking Trivy Template File:"
-          ls -l .github/trivy/templates/github.tpl || echo "Template file NOT found!"
-          cat .github/trivy/templates/github.tpl || echo "Template file is empty or inaccessible!"
+
+    #   - name: Build Docker Image
+    #     run: |
+    #       docker build -t openmetadata-server:trivy -f docker/development/Dockerfile .
+       
 
       - name: Run Trivy Image Scan
         id: trivy_scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: "image"
-          image-ref: docker.getcollate.io/openmetadata/server:1.6.1
-          hide-progress: false
+          image-ref: openmetadata-server:trivy
           ignore-unfixed: true
-          severity: "CRITICAL,HIGH,MEDIUM"
-          format: template
-          template: "./.github/trivy/templates/github.tpl"
-          output: trivy-results.md
+          severity: "HIGH,CRITICAL,MEDIUM.LOW"
+          output: "trivy-results-server.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
-      - name: Debug Trivy Output
+      - name: Format Trivy Output
         run: |
-          echo "Checking Trivy Output File:"
-          ls -l trivy-results.md || echo "Trivy output file NOT found!"
-          cat trivy-results.md || echo "Trivy output is empty!"
-
+          echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
+          echo "" >> trivy-results.md
+          echo '```' >> trivy-results.md
+          # Correct output file path handling here
+          cat trivy-results-server.txt >> trivy-results.md
+          echo '```' >> trivy-results.md
+    
       - name: Comment Trivy Scan Results on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-            path: trivy-results.md
+          path: trivy-results.md
+
+
+# name: Trivy Scan For OpenMetadata Server Docker Image
+
+# on:
+#   pull_request:
+
+# concurrency: 
+#   group: trivy-server-scan-${{ github.head_ref || github.run_id }}
+#   cancel-in-progress: true
+
+# jobs:
+#   build-and-scan:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       pull-requests: write
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v4
+
+#       - name: Debug Template Path
+#         run: |
+#           echo "Checking Trivy Template File:"
+#           ls -l .github/trivy/templates/github.tpl || echo "Template file NOT found!"
+#           cat .github/trivy/templates/github.tpl || echo "Template file is empty or inaccessible!"
+
+#       - name: Run Trivy Image Scan
+#         id: trivy_scan
+#         uses: aquasecurity/trivy-action@master
+#         with:
+#           scan-type: "image"
+#           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
+#           hide-progress: false
+#           ignore-unfixed: true
+#           severity: "CRITICAL,HIGH,MEDIUM"
+#           format: template
+#           template: "./.github/trivy/templates/github.tpl"
+#           output: trivy-results.md
+#         env:
+#           TRIVY_DISABLE_VEX_NOTICE: "true"
+
+#       - name: Debug Trivy Output
+#         run: |
+#           echo "Checking Trivy Output File:"
+#           ls -l trivy-results.md || echo "Trivy output file NOT found!"
+#           cat trivy-results.md || echo "Trivy output is empty!"
+
+#       - name: Comment Trivy Scan Results on PR
+#         uses: marocchino/sticky-pull-request-comment@v2
+#         with:
+#             path: trivy-results.md
