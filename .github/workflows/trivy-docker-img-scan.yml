@@ -119,6 +119,9 @@ jobs:
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
+      - name: Print Trivy Raw Scan Results
+        run: cat trivy-results.md
+
 
       - name: Comment Trivy Scan Results on PR
         uses: marocchino/sticky-pull-request-comment@v2
