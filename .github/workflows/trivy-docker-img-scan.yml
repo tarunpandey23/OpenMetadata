@@ -49,7 +49,9 @@ jobs:
         run: |
           echo "Current working directory: $(pwd)"
           ls -R .github/trivy/templates
-          ls -R /github/workspace
+
+      - name: Print Absolute Path of Template
+        run: realpath .github/trivy/templates/github.tpl
             
     #   - name: Prepare for Docker Build
     #     id: prepare
