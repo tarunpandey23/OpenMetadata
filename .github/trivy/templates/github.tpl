@@ -86,7 +86,7 @@
 # <h3>Trivy Returned Empty Report</h3>
 # {{- end }}
 
-{{- range .Results }}
+{{- range . }}
   <h3>Target <code>{{ .Target }}</code></h3>
   {{- if .Vulnerabilities }}
     <h4>Vulnerabilities ({{ len .Vulnerabilities }})</h4>
