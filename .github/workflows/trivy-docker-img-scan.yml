@@ -114,8 +114,7 @@ jobs:
           ignore-unfixed: true
           scan-ref: .
           format: 'template'
-        #   template: "@.github/trivy/templates/github.tpl"
-          template: "@$HOME/.local/bin/trivy-bin/contrib/html.tpl"
+          template: "@.github/trivy/templates/github.tpl"
           output: trivy-results.md
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
@@ -124,3 +123,6 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
             path: trivy-results.md
+
+
+
