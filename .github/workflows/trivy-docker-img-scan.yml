@@ -86,124 +86,6 @@
 #           path: trivy-results.md
 
 
-# name: Trivy Scan For OpenMetadata Server Docker Image
-
-# on:
-#   pull_request:
-
-# concurrency: 
-#   group: trivy-server-scan-${{ github.head_ref || github.run_id }}
-#   cancel-in-progress: true
-
-# jobs:
-#   build-and-scan:
-#     runs-on: ubuntu-latest
-#     permissions:
-#       pull-requests: write
-#     steps:
-#       - name: Checkout Repository
-#         uses: actions/checkout@v4
-
-#       - name: Run Trivy Image Scan
-#         id: trivy_scan
-#         uses: aquasecurity/trivy-action@master
-#         with:
-#           scan-type: "image"
-#           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
-#           hide-progress: false
-#           ignore-unfixed: true
-#         #   severity: "CRITICAL,HIGH,MEDIUM"
-#           format: template
-#           template: "./.github/trivy/template/github.tpl"
-#           output: trivy-results.md
-#         env:
-#           TRIVY_DISABLE_VEX_NOTICE: "true"
-
-#       - name: Debug Trivy Output
-#         run: |
-#           echo "Checking Trivy Output File:"
-#           ls -l trivy-results.md || echo "Trivy output file NOT found!"
-#           cat trivy-results.md || echo "Trivy output is empty!"
-
-#       - name: Comment Trivy Scan Results on PR
-#         uses: marocchino/sticky-pull-request-comment@v2
-#         with:
-#             path: trivy-results.md
-            
-# name: Trivy Scan For OpenMetadata Server Docker Image
-
-# on:
-#   pull_request:
-
-# concurrency: 
-#   group: trivy-server-scan-${{ github.head_ref || github.run_id }}
-#   cancel-in-progress: true
-
-# jobs:
-#   build-and-scan:
-#     runs-on: ubuntu-latest
-#     permissions:
-#       pull-requests: write
-#     steps:
-#       - name: Checkout Repository
-#         uses: actions/checkout@v4
-
-#       - name: Run Trivy Image Scan
-#         id: trivy_scan
-#         uses: aquasecurity/trivy-action@master
-#         with:
-#           scan-type: "image"
-#           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
-#           hide-progress: false
-#           ignore-unfixed: true
-#           format: template
-#           template: |
-#             {{- if . }}
-#               {{- range . }}
-#                 <h3>Target <code>{{ escapeXML .Target }}</code></h3>
-#                 {{- if (eq (len .Vulnerabilities) 0) }}
-#                   <h4>No Vulnerabilities found</h4>
-#                 {{- else }}
-#                   <h4>Vulnerabilities ({{ len .Vulnerabilities }})</h4>
-#                   <table>
-#                     <tr>
-#                       <th>Package</th>
-#                       <th>ID</th>
-#                       <th>Severity</th>
-#                       <th>Installed Version</th>
-#                       <th>Fixed Version</th>
-#                     </tr>
-#                     {{- range .Vulnerabilities }}
-#                       <tr>
-#                         <td><code>{{ escapeXML .PkgName }}</code></td>
-#                         <td>{{ escapeXML .VulnerabilityID }}</td>
-#                         <td>{{ escapeXML .Severity }}</td>
-#                         <td>{{ escapeXML .InstalledVersion }}</td>
-#                         <td>{{ escapeXML .FixedVersion }}</td>
-#                       </tr>
-#                     {{- end }}
-#                   </table>
-#                 {{- end }}
-#               {{- end }}
-#             {{- else }}
-#               <h3>Trivy Returned Empty Report</h3>
-#             {{- end }}
-#           output: trivy-results.md
-#         env:
-#           TRIVY_DISABLE_VEX_NOTICE: "true"
-
-#       - name: Debug Trivy Output
-#         run: |
-#           echo "Checking Trivy Output File:"
-#           ls -l trivy-results.md || echo "Trivy output file NOT found!"
-#           cat trivy-results.md || echo "Trivy output is empty!"
-
-#       - name: Comment Trivy Scan Results on PR
-#         uses: marocchino/sticky-pull-request-comment@v2
-#         with:
-#           path: trivy-results.md
-
-
 name: Trivy Scan For OpenMetadata Server Docker Image
 
 on:
@@ -230,14 +112,12 @@ jobs:
           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
           hide-progress: false
           ignore-unfixed: true
-          format: template
-          template: |
-            {{- if . }}
-              <h3>Target: {{ .Target }}</h3>
-            {{- else }}
-              <h3>Trivy Returned Empty Report</h3>
-            {{- end }}
-          output: trivy-results.md
+        # #   severity: "CRITICAL,HIGH,MEDIUM"
+        #   format: template
+        #   template: "./.github/trivy/template/github.tpl"
+        #   output: trivy-results.md
+          format: 'sarif'
+          output: 'trivy-results.sarif'
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
@@ -250,4 +130,7 @@ jobs:
       - name: Comment Trivy Scan Results on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          path: trivy-results.md
+            # path: trivy-results.md
+            path: trivy-results.sarif
+            
+
