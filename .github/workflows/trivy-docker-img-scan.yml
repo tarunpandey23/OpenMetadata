@@ -115,6 +115,7 @@ jobs:
           scan-ref: .
           format: 'template'
           template: "@$HOME/.local/bin/trivy-bin/contrib/html.tpl"
+          output: trivy-results.md
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
@@ -127,8 +128,8 @@ jobs:
       - name: Comment Trivy Scan Results on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-            # path: trivy-results.md
-            path: trivy-results.sarif
+            path: trivy-results.md
+          
             
 
     #   - name: Run Trivy Image Scan
