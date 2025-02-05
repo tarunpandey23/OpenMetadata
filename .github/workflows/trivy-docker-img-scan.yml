@@ -115,42 +115,21 @@ jobs:
           scan-ref: .
           format: 'template'
           template: "@.github/trivy/templates/github.tpl"
-          output: trivy-result.md
+          output: trivy-results-server.txt
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
-
+      - name: Format Trivy Output
+        run: |
+          echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
+          echo "" >> trivy-results.md
+          echo '```' >> trivy-results.md
+          # Correct output file path handling here
+          cat trivy-results-server.txt >> trivy-results.md
+          echo '```' >> trivy-results.md
+    
       - name: Comment Trivy Scan Results on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-            path: trivy-result.md
-          
-            
-
-    #   - name: Run Trivy Image Scan
-    #     id: trivy_scan
-    #     uses: aquasecurity/trivy-action@master
-    #     with:
-    #       scan-type: "image"
-    #       image-ref: openmetadata-server:trivy
-    #       ignore-unfixed: true
-    #     #   severity: "HIGH,CRITICAL,MEDIUM,LOW"
-    #       format: Ta
-    #       output: "trivy-results-server.txt"
-    #     env:
-    #       TRIVY_DISABLE_VEX_NOTICE: "true"
-
-    #   - name: Format Trivy Output
-    #     run: |
-    #       echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
-    #       echo "" >> trivy-results.md
-    #       echo '```' >> trivy-results.md
-    #       # Correct output file path handling here
-    #       cat trivy-results-server.txt >> trivy-results.md
-    #       echo '```' >> trivy-results.md
-    
-    #   - name: Comment Trivy Scan Results on PR
-    #     uses: marocchino/sticky-pull-request-comment@v2
-    #     with:
-    #       path: trivy-results.md
+          path: trivy-results.md
 
