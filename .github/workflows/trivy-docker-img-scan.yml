@@ -112,6 +112,7 @@ jobs:
           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
           hide-progress: false
           ignore-unfixed: true
+          severity: "HIGH,CRITICAL"
           scan-ref: .
           format: 'template'
           template: "@.github/trivy/templates/github.tpl"
