@@ -114,7 +114,7 @@ jobs:
           ignore-unfixed: true
           scan-ref: .
           format: 'template'
-          template: ".github/trivy/templates/github.tpl"
+          template: "@.github/trivy/templates/github.tpl"
           output: trivy-result.md
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
