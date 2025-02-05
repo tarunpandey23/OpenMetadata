@@ -45,7 +45,7 @@ jobs:
           scan-type: "image"
           image-ref: ${{ matrix.image }}:trivy
           ignore-unfixed: true
-          severity: "HIGH,CRITICAL"
+          severity: "HIGH,CRITICAL,MEDIUM"
           output: "trivy-results-${{ matrix.image }}.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
