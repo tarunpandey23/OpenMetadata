@@ -104,7 +104,7 @@
       {{- range .Vulnerabilities }}
         <tr>
           <td><code>{{ .PkgName }}</code></td>
-          <td>{{ .VulnID }}</td>
+          <td>{{ .VulnerabilityID }}</td>  <!-- Changed to VulnerabilityID -->
           <td>{{ .Severity }}</td>
           <td>{{ .InstalledVersion }}</td>
           <td>{{ .FixedVersion }}</td>
