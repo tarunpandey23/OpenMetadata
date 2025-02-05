@@ -55,7 +55,6 @@
 # <h3>Trivy Returned Empty Report</h3>
 # {{- end }}
 
-
 {{- if . }}
 {{- range . }}
 <h3>Target <code>{{ escapeXML .Target }}</code></h3>
