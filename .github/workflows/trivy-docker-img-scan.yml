@@ -64,7 +64,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: "image"
-          image-ref: openmetadata-server:trivy
+          image-ref: docker.getcollate.io/openmetadata/server:1.6.1
           ignore-unfixed: true
         #   severity: "HIGH,CRITICAL,MEDIUM,LOW"
           output: "trivy-results-server.txt"
