@@ -44,20 +44,26 @@ jobs:
 
       - name: Checkout Repository
         uses: actions/checkout@v4
-            
-      - name: Prepare for Docker Build
-        id: prepare
-        uses: ./.github/actions/prepare-for-docker-build
-        with:
-          image: openmetadata-server
-          tag: trivy
-          is_ingestion: false
 
-
-      - name: Build Docker Image
+      - name: Debug Workspace - List Files
         run: |
-          docker build -t openmetadata-server:trivy -f docker/development/Dockerfile .
+          echo "Current working directory: $(pwd)"
+          ls -R .github/trivy/templates
+          ls -R /github/workspace
+            
+    #   - name: Prepare for Docker Build
+    #     id: prepare
+    #     uses: ./.github/actions/prepare-for-docker-build
+    #     with:
+    #       image: openmetadata-server
+    #       tag: trivy
+    #       is_ingestion: false
 
+
+    #   - name: Build Docker Image
+    #     run: |
+    #       docker build -t openmetadata-server:trivy -f docker/development/Dockerfile .
+       
 
     #   - name: Run Trivy Image Scan
     #     id: trivy_scan
@@ -89,7 +95,8 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
             scan-type: 'image'
-            image-ref: openmetadata-server:trivy
+            # image-ref: openmetadata-server:trivy
+            image-ref: docker.getcollate.io/openmetadata/server:1.6.1
             hide-progress: false
             exit-code: '1'
             ignore-unfixed: true
