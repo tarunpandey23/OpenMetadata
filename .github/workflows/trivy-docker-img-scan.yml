@@ -112,12 +112,9 @@ jobs:
           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
           hide-progress: false
           ignore-unfixed: true
-        # #   severity: "CRITICAL,HIGH,MEDIUM"
-        #   format: template
-        #   template: "./.github/trivy/template/github.tpl"
-        #   output: trivy-results.md
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          scan-ref: .
+          format: 'template'
+          template: "@$HOME/.local/bin/trivy-bin/contrib/html.tpl"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
@@ -133,4 +130,31 @@ jobs:
             # path: trivy-results.md
             path: trivy-results.sarif
             
+
+    #   - name: Run Trivy Image Scan
+    #     id: trivy_scan
+    #     uses: aquasecurity/trivy-action@master
+    #     with:
+    #       scan-type: "image"
+    #       image-ref: openmetadata-server:trivy
+    #       ignore-unfixed: true
+    #     #   severity: "HIGH,CRITICAL,MEDIUM,LOW"
+    #       format: Ta
+    #       output: "trivy-results-server.txt"
+    #     env:
+    #       TRIVY_DISABLE_VEX_NOTICE: "true"
+
+    #   - name: Format Trivy Output
+    #     run: |
+    #       echo "## 🚨 Trivy Security Scan Results 🚨" > trivy-results.md
+    #       echo "" >> trivy-results.md
+    #       echo '```' >> trivy-results.md
+    #       # Correct output file path handling here
+    #       cat trivy-results-server.txt >> trivy-results.md
+    #       echo '```' >> trivy-results.md
+    
+    #   - name: Comment Trivy Scan Results on PR
+    #     uses: marocchino/sticky-pull-request-comment@v2
+    #     with:
+    #       path: trivy-results.md
 
