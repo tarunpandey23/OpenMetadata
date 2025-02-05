@@ -86,28 +86,33 @@
 # <h3>Trivy Returned Empty Report</h3>
 # {{- end }}
 
-
-<table>
-  <thead>
-    <tr>
-      <th>Package</th>
-      <th>Vulnerability ID</th>
-      <th>Severity</th>
-      <th>Installed Version</th>
-      <th>Fixed Version</th>
-      <th>Links</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{range .Vulnerabilities}}
-    <tr class="severity-{{.Severity}}">
-      <td>{{.Package}}</td>
-      <td>{{.VulnerabilityID}}</td>
-      <td class="severity">{{.Severity}}</td>
-      <td>{{.InstalledVersion}}</td>
-      <td>{{.FixedVersion}}</td>
-      <td class="links">{{range .Links}}<a href="{{.}}">{{.}}</a>{{end}}</td>
-    </tr>
-    {{end}}
-  </tbody>
-</table>
+{{- range .Results }}
+  <h3>Target <code>{{ .Target }}</code></h3>
+  {{- if .Vulnerabilities }}
+    <h4>Vulnerabilities ({{ len .Vulnerabilities }})</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Package</th>
+          <th>Vulnerability ID</th>
+          <th>Severity</th>
+          <th>Installed Version</th>
+          <th>Fixed Version</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{- range .Vulnerabilities }}
+        <tr>
+          <td><code>{{ .PkgName }}</code></td>
+          <td>{{ .VulnID }}</td>
+          <td>{{ .Severity }}</td>
+          <td>{{ .InstalledVersion }}</td>
+          <td>{{ .FixedVersion }}</td>
+        </tr>
+      {{- end }}
+      </tbody>
+    </table>
+  {{- else }}
+    <h4>No Vulnerabilities found</h4>
+  {{- end }}
+{{- end }}
