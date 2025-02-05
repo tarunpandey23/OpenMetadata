@@ -118,9 +118,9 @@ jobs:
           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
           hide-progress: false
           ignore-unfixed: true
-          severity: "CRITICAL,HIGH,MEDIUM"
+        #   severity: "CRITICAL,HIGH,MEDIUM"
           format: template
-          template: "./.github/trivy/templates/github.tpl"
+          template: "@/github/workspace/.github/trivy/templates/github.tpl"
           output: trivy-results.md
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
