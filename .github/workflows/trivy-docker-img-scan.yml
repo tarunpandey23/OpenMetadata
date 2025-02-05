@@ -1,41 +1,61 @@
-name: Docker Build and Trivy Scan
+name: Trivy Scan For OpenMetadata Server Docker Image
 
 on:
-  pull_request:
+    pull_request_target:
+        types: [labeled, opened, synchronize, reopened]
+        paths:
+          - "openmetadata-service/**"
+          - "openmetadata-spec/src/main/resources/json/schema/**"
+          - "openmetadata-dist/**"
+          - "openmetadata-clients/**"
+          - "common/**"
+          - "pom.xml"
+          - "yarn.lock"
+          - "Makefile"
+          - "bootstrap/**"
+concurrency: 
+  group: trivy-server-scan-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    strategy:
-      matrix:
-        image:
-          - openmetadata-server
-          - openmetadata-ingestion  
-      fail-fast: false
-    # max-parallel: 2 
-
     steps:
+      - name: Wait for the labeler
+        uses: lewagon/wait-on-check-action@v1.3.3
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          check-name: Team Label
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 90
+
+      - name: Verify PR labels
+        uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          valid-labels: 'safe to test'
+          pull-request-number: '${{ github.event.pull_request.number }}'
+          disable-reviews: true  # To not auto approve changes
+
       - name: Checkout Repository
         uses: actions/checkout@v4
-    
+            
       - name: Prepare for Docker Build
         id: prepare
         uses: ./.github/actions/prepare-for-docker-build
         with:
           image: openmetadata-server
           tag: trivy
-          is_ingestion: ${{ matrix.image == 'openmetadata-ingestion' && 'true' || 'false' }}
+          is_ingestion: false
 
 
       - name: Build Docker Image
         run: |
-          if [[ "${{ matrix.image }}" == "openmetadata-server" ]]; then
-            docker build -t openmetadata-server:trivy -f docker/development/Dockerfile .
-          elif [[ "${{ matrix.image }}" == "openmetadata-ingestion" ]]; then
-            docker build -t openmetadata-ingestion:trivy -f ingestion/Dockerfile.ci .
-          fi
+          docker build -t openmetadata-server:trivy -f docker/development/Dockerfile .
 
 
       - name: Run Trivy Image Scan
@@ -43,10 +63,10 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: "image"
-          image-ref: ${{ matrix.image }}:trivy
+          image-ref: openmetadata-server:trivy
           ignore-unfixed: true
           severity: "HIGH,CRITICAL,MEDIUM"
-          output: "trivy-results-${{ matrix.image }}.txt"
+          output: "trivy-results-server.txt"
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
@@ -56,7 +76,7 @@ jobs:
           echo "" >> trivy-results.md
           echo '```' >> trivy-results.md
           # Correct output file path handling here
-          cat trivy-results-${{ matrix.image }}.txt >> trivy-results.md
+          cat trivy-results-server.txt >> trivy-results.md
           echo '```' >> trivy-results.md
     
       - name: Comment Trivy Scan Results on PR
