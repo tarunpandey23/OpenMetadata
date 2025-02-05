@@ -88,7 +88,6 @@ jobs:
       - name: Run Trivy config scanner - High,Critical
         uses: aquasecurity/trivy-action@master
         with:
-            scan-ref: ${{ inputs.moduleFolderPath }}
             scan-type: 'image'
             image-ref: openmetadata-server:trivy
             hide-progress: false
