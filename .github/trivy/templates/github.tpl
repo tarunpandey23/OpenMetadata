@@ -87,15 +87,27 @@
 # {{- end }}
 
 
-{{- if . }}
-{{- range . }}
-<h3>Target: <code>{{ escapeXML .Target }}</code></h3>
-{{- if (eq (len .Vulnerabilities) 0) }}
-<h4>No Vulnerabilities found</h4>
-{{- else }}
-<h4>Vulnerabilities found</h4>
-{{- end }}
-{{- end }}
-{{- else }}
-<h3>No targets found</h3>
-{{- end }}
+<table>
+  <thead>
+    <tr>
+      <th>Package</th>
+      <th>Vulnerability ID</th>
+      <th>Severity</th>
+      <th>Installed Version</th>
+      <th>Fixed Version</th>
+      <th>Links</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .Vulnerabilities}}
+    <tr class="severity-{{.Severity}}">
+      <td>{{.Package}}</td>
+      <td>{{.VulnerabilityID}}</td>
+      <td class="severity">{{.Severity}}</td>
+      <td>{{.InstalledVersion}}</td>
+      <td>{{.FixedVersion}}</td>
+      <td class="links">{{range .Links}}<a href="{{.}}">{{.}}</a>{{end}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>

@@ -112,17 +112,13 @@ jobs:
           image-ref: docker.getcollate.io/openmetadata/server:1.6.1
           hide-progress: false
           ignore-unfixed: true
+          scan-ref: .
           format: 'template'
-          template: "@$HOME/.local/bin/trivy-bin/contrib/html.tpl"
+          template: ".github/trivy/templates/github.tpl"
           output: trivy-results.md
         env:
           TRIVY_DISABLE_VEX_NOTICE: "true"
 
-      - name: Debug Trivy Output
-        run: |
-          echo "Checking Trivy Output File:"
-          ls -l trivy-results.md || echo "Trivy output file NOT found!"
-          cat trivy-results.md || echo "Trivy output is empty!"
 
       - name: Comment Trivy Scan Results on PR
         uses: marocchino/sticky-pull-request-comment@v2
