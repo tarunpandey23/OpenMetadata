@@ -124,4 +124,3 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
             path: trivy-results.md
-
