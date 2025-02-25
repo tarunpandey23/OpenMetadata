@@ -35,4 +35,6 @@ USER openmetadata
 
 WORKDIR /opt/openmetadata
 ENTRYPOINT [ "/bin/bash" ]
+
+
 CMD ["/openmetadata-start.sh"]

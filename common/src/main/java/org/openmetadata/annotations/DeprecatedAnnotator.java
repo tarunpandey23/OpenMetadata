@@ -73,6 +73,4 @@ public class DeprecatedAnnotator extends AbstractAnnotator {
       throw new RuntimeException(e);
     }
   }
-
-  
 }
