@@ -44,12 +44,6 @@ jobs:
           swap-storage: true
           docker-images: false
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-
       - name: Wait for the labeler
         uses: lewagon/wait-on-check-action@v1.3.4
         if: ${{ github.event_name == 'pull_request_target' }}
@@ -67,6 +61,13 @@ jobs:
           valid-labels: "safe to test"
           pull-request-number: "${{ github.event.pull_request.number }}"
           disable-reviews: true # To not auto approve changes
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
       - name: Setup Openmetadata Test Environment
         uses: ./.github/actions/setup-openmetadata-test-environment
         with:
@@ -83,3 +84,9 @@ jobs:
         run: |
           source env/bin/activate
           python scripts/validate_sample_data.py
+
+      - name: Clean Up Docker Volumes
+        run: |
+          docker compose -f docker/development/docker-compose.yml down --volumes --remove-orphans || true
+          sudo rm -rf docker/development/docker-volume || true
+        if: always()
